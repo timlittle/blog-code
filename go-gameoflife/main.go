@@ -13,7 +13,7 @@ func (g *Game) Draw() {
 	// Loop through all of the rows
 	for y := range g.State {
 
-		// Loop through all of the columes
+		// Loop through all of the columns
 		for x := 0; x < len(g.State[y]); x++ {
 
 			// If we have marked the column as a 1, draw it as white
@@ -60,10 +60,10 @@ func CountNeighbours(x, y int, gameState [][]int) int {
 	// Loop through all the rows
 	for cellX := x - 1; cellX <= x+1; cellX++ {
 
-		// Loop through all the columes
+		// Loop through all the columns
 		for cellY := y - 1; cellY <= y+1; cellY++ {
 
-			// We want to make sure we do not count past the boundry of the board
+			// We want to make sure we do not count past the boundary of the board
 			if cellY < 0 || cellX < 0 || cellY >= len(gameState) || cellX >= len(gameState[0]) {
 				continue
 			}
@@ -205,7 +205,7 @@ func main() {
 	// Create the Raylib window using the state
 	rl.InitWindow(int32(game.Width), int32(game.Height), "Game of life")
 
-	// Close the window at the end of the progrm
+	// Close the window at the end of the program
 	defer rl.CloseWindow()
 
 	// We dont need a high FPS for the game, so 10 should be enough
