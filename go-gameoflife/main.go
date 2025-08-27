@@ -30,6 +30,87 @@ func (g *Game) Draw() {
 	}
 }
 
+func (g *Game) Update() {
+
+	// We can stat with hardcoded state for now
+	// However, we would want to update thisbased on the current state
+	var newState = [][]int{
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	}
+
+	// Loop through each rown
+	for indexY, cellY := range g.State {
+
+		// Loop through each column
+		for indexX, cellX := range cellY {
+
+			// Count how many neighbours the current cell has
+			neighbours := CountNeighbours(indexX, indexY, g.State)
+
+			// Update the new state using the rule based on neighbours
+			newState[indexY][indexX] = IsCellAlive(cellX, neighbours)
+		}
+	}
+
+	// Set the new state to the updated state
+	g.State = newState
+}
+
+func CountNeighbours(x, y int, gameState [][]int) int {
+	// Counter for the neighbours
+	count := 0
+
+	// Loop through all the rows
+	for cellX := x - 1; cellX <= x+1; cellX++ {
+
+		// Loop through all the columes
+		for cellY := y - 1; cellY <= y+1; cellY++ {
+
+			// We want to make sure we do not count past the boundry of the board
+			if cellY < 0 || cellX < 0 || cellY >= len(gameState) || cellX >= len(gameState[0]) {
+				continue
+			}
+			// If current cell, we can skip it
+			if cellY == y && cellX == x {
+				continue
+			}
+			//  Check if cell is alive
+			if gameState[cellY][cellX] == 1 {
+				count++
+			}
+
+		}
+	}
+	return count
+}
+
+func IsCellAlive(current, neighbours int) int {
+	switch {
+	// Any live cell with fewer than two live neighbours dies
+	// as if by underpopulation.
+	case neighbours < 2:
+		return 0
+	// Any live cell with two or three live neighbours lives
+	// on to the next generation.
+	// Any dead cell with two neighbours, remains dead
+	case neighbours == 2:
+		return current
+	// Any dead cell with exactly three live neighbours becomes a
+	// live cell, as if by reproduction.
+	case neighbours == 3:
+		return 1
+	// Any live cell with more than three live neighbours dies
+	// as if by overpopulation.
+	case neighbours > 3:
+		return 0
+	}
+	return 0
+}
+
 func NewGame(width, height, tileSize int) *Game {
 	g := &Game{Width: width, Height: height, tileSize: tileSize}
 	g.State = [][]int{
@@ -62,6 +143,9 @@ func main() {
 
 		// Create a black background
 		rl.ClearBackground(rl.Black)
+
+		// Update the game state before drawing
+		game.Update()
 
 		// Draw the game state
 		game.Draw()
