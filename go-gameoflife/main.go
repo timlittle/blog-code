@@ -33,16 +33,10 @@ func (g *Game) Draw() {
 func (g *Game) Update() {
 
 	// We can stat with hardcoded state for now
-	// However, we would want to update thisbased on the current state
-	var newState = [][]int{
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-	}
+	// However, we would want to update this based on the current state
+	newState := CreateGameState(len(g.State[0]), len(g.State))
 
-	// Loop through each rown
+	// Loop through each row
 	for indexY, cellY := range g.State {
 
 		// Loop through each column
@@ -111,21 +105,41 @@ func IsCellAlive(current, neighbours int) int {
 	return 0
 }
 
+func CreateGameState(newWidth, newHeight int) [][]int {
+	// Create a new game state with the right height
+	newState := make([][]int, newHeight)
+
+	// Create the rows with the right length
+	for i := range newHeight {
+		newState[i] = make([]int, newWidth)
+	}
+
+	// Return the new state map
+	return newState
+}
+
+func CreateGliders(x, y int, gameState *[][]int) {
+	// Draw the glider patter in the game state
+	(*gameState)[y][x+1] = 1
+	(*gameState)[y+1][x+2] = 1
+	(*gameState)[y+2][x] = 1
+	(*gameState)[y+2][x+1] = 1
+	(*gameState)[y+2][x+2] = 1
+}
+
 func NewGame(width, height, tileSize int) *Game {
 	g := &Game{Width: width, Height: height, tileSize: tileSize}
-	g.State = [][]int{
-		{0, 1, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 1, 0, 0, 0, 0, 1, 0, 0},
-		{1, 1, 1, 0, 0, 0, 0, 1, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 1, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-	}
+	g.State = CreateGameState(g.Width/g.tileSize, g.Height/g.tileSize)
 	return g
 }
 
 func main() {
 	// Create the game metadata and state holding object
-	var game = NewGame(800, 400, 80)
+	var game = NewGame(800, 400, 10)
+	CreateGliders(0, 0, &game.State)
+	CreateGliders(10, 0, &game.State)
+	CreateGliders(20, 0, &game.State)
+	CreateGliders(30, 0, &game.State)
 
 	// Create the Raylib window using the state
 	rl.InitWindow(int32(game.Width), int32(game.Height), "Game of life")
