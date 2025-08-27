@@ -32,8 +32,7 @@ func (g *Game) Draw() {
 
 func (g *Game) Update() {
 
-	// We can stat with hardcoded state for now
-	// However, we would want to update this based on the current state
+	// New game state
 	newState := CreateGameState(len(g.State[0]), len(g.State))
 
 	// Loop through each row
@@ -127,6 +126,69 @@ func CreateGliders(x, y int, gameState *[][]int) {
 	(*gameState)[y+2][x+2] = 1
 }
 
+func addPattern(x, y int, pattern [][]int, gameState *[][]int) {
+	// Loop through the row
+	for row := range pattern {
+
+		// Loop through the
+		for col := 0; col < len(pattern[row]); col++ {
+
+			// Update the game state if cell alive
+			if pattern[row][col] == 1 {
+				(*gameState)[y+row][x+col] = 1
+			}
+		}
+	}
+}
+
+func CreateGliderGun(x, y int, gameState *[][]int) {
+	// Create a slice of the pattern
+	pattern := [][]int{
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1},
+		{1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	}
+	addPattern(x, y, pattern, gameState)
+
+}
+func CreatePulsar(x, y int, gameState *[][]int) {
+	// Create a slice of the pattern
+	pattern := [][]int{
+		{0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1},
+		{1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1},
+		{1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1},
+		{0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0},
+		{1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1},
+		{1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1},
+		{1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0},
+	}
+
+	addPattern(x, y, pattern, gameState)
+}
+
+func CreatePentadecathlon(x, y int, gameState *[][]int) {
+	// Create a slice of the pattern
+	pattern := [][]int{
+		{0, 0, 1, 0, 0, 0, 0, 1, 0, 0},
+		{1, 1, 0, 1, 1, 1, 1, 0, 1, 1},
+		{0, 0, 1, 0, 0, 0, 0, 1, 0, 0},
+	}
+
+	addPattern(x, y, pattern, gameState)
+}
+
 func NewGame(width, height, tileSize int) *Game {
 	g := &Game{Width: width, Height: height, tileSize: tileSize}
 	g.State = CreateGameState(g.Width/g.tileSize, g.Height/g.tileSize)
@@ -136,10 +198,9 @@ func NewGame(width, height, tileSize int) *Game {
 func main() {
 	// Create the game metadata and state holding object
 	var game = NewGame(800, 400, 10)
-	CreateGliders(0, 0, &game.State)
-	CreateGliders(10, 0, &game.State)
-	CreateGliders(20, 0, &game.State)
-	CreateGliders(30, 0, &game.State)
+	CreateGliderGun(0, 0, &game.State)
+	CreatePentadecathlon(40, 10, &game.State)
+	CreatePulsar(60, 20, &game.State)
 
 	// Create the Raylib window using the state
 	rl.InitWindow(int32(game.Width), int32(game.Height), "Game of life")
