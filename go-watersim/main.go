@@ -53,9 +53,55 @@ func (g *Game) Update() {
 
 }
 
+func canFlowDown(x, y int, state *[][]Droplet) bool {
+	return y+1 < len(*state) && (*state)[y+1][x].volume < 1.0
+}
+
+func tryHorizontalFlow(x, y int, state *[][]Droplet) {
+	current := &(*state)[y][x]
+
+	// Only cascade if there's water below
+	hasWaterBelow := y+1 < len(*state) && (*state)[y+1][x].volume > 0.5
+	if !hasWaterBelow {
+		return
+	}
+
+	// Cascade right - distribute to multiple cells
+	for offset := 1; offset <= 3 && x+offset < len((*state)[y]); offset++ {
+		target := &(*state)[y][x+offset]
+		if target.volume < current.volume {
+			flowRate := (current.volume - target.volume) * 0.1 / float64(offset)
+			fill(current, target, 1.0, flowRate)
+		}
+	}
+
+	// Cascade left - distribute to multiple cells
+	for offset := 1; offset <= 3 && x-offset >= 0; offset++ {
+		target := &(*state)[y][x-offset]
+		if target.volume < current.volume {
+			flowRate := (current.volume - target.volume) * 0.1 / float64(offset)
+			fill(current, target, 1.0, flowRate)
+		}
+	}
+}
+
 func processWaterCell(x, y int, newState *[][]Droplet) {
 	// Try to flow downwards, as if by gravity
 	fill(&(*newState)[y][x], &(*newState)[y+1][x], 1.0, 0.5)
+
+	// If all water flowed down, no need to continue
+	if (*newState)[y][x].volume == 0 {
+		return
+	}
+
+	// If water can still flow down, don't try other directions yet
+	if canFlowDown(x, y, newState) {
+		return
+	}
+
+	// Water spreads sideways when blocked below
+	tryHorizontalFlow(x, y, newState)
+
 }
 
 // Calculate how much more water a droplet can hold
