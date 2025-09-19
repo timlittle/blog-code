@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="360" height="280" xmlns="http://www.w3.org/2000/svg">
+  <!-- Grid cells -->
+  <rect x="40" y="40" width="70" height="60" fill="#b3d9ff" stroke="#333" stroke-width="2"/>
+  <rect x="120" y="40" width="70" height="60" fill="#b3d9ff" stroke="#333" stroke-width="2"/>
+  <rect x="200" y="40" width="70" height="60" fill="#b3d9ff" stroke="#333" stroke-width="2"/>
+  
+  <rect x="40" y="110" width="70" height="60" fill="#b3d9ff" stroke="#333" stroke-width="2"/>
+  <rect x="120" y="110" width="70" height="60" fill="#1a66cc" stroke="#333" stroke-width="3"/>
+  <rect x="200" y="110" width="70" height="60" fill="#b3d9ff" stroke="#333" stroke-width="2"/>
+  
+  <rect x="40" y="180" width="70" height="60" fill="#b3d9ff" stroke="#333" stroke-width="2"/>
+  <rect x="120" y="180" width="70" height="60" fill="#b3d9ff" stroke="#333" stroke-width="2"/>
+  <rect x="200" y="180" width="70" height="60" fill="#b3d9ff" stroke="#333" stroke-width="2"/>
+  
+  <!-- Coordinates -->
+  <text x="75" y="75" text-anchor="middle" font-family="monospace" font-size="12" fill="#333">(x-1,y-1)</text>
+  <text x="155" y="75" text-anchor="middle" font-family="monospace" font-size="12" fill="#333">(x,y-1)</text>
+  <text x="235" y="75" text-anchor="middle" font-family="monospace" font-size="12" fill="#333">(x+1,y-1)</text>
+  
+  <text x="75" y="145" text-anchor="middle" font-family="monospace" font-size="12" fill="#333">(x-1,y)</text>
+  <text x="155" y="145" text-anchor="middle" font-family="monospace" font-size="12" fill="white">(x,y)</text>
+  <text x="235" y="145" text-anchor="middle" font-family="monospace" font-size="12" fill="#333">(x+1,y)</text>
+  
+  <text x="75" y="215" text-anchor="middle" font-family="monospace" font-size="12" fill="#333">(x-1,y+1)</text>
+  <text x="155" y="215" text-anchor="middle" font-family="monospace" font-size="12" fill="#333">(x,y+1)</text>
+  <text x="235" y="215" text-anchor="middle" font-family="monospace" font-size="12" fill="#333">(x+1,y+1)</text>
+</svg>
