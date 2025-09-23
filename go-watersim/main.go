@@ -54,7 +54,7 @@ func (g *Game) Update() {
 }
 
 func canFlowDown(x, y int, state *[][]Droplet) bool {
-	return y+1 < len(*state) && (*state)[y+1][x].volume < 1.0
+	return y+1 < len(*state) && (*state)[y+1][x].volume < 1.0 && !(*state)[y+1][x].isObstacle
 }
 
 func tryHorizontalFlow(x, y int, state *[][]Droplet) {
@@ -69,7 +69,7 @@ func tryHorizontalFlow(x, y int, state *[][]Droplet) {
 	// Cascade right - distribute to multiple cells
 	for offset := 1; offset <= 3 && x+offset < len((*state)[y]); offset++ {
 		target := &(*state)[y][x+offset]
-		if target.volume < current.volume {
+		if target.volume < current.volume && !target.isObstacle {
 			flowRate := (current.volume - target.volume) * 0.1 / float64(offset)
 			fill(current, target, 1.0, flowRate)
 		}
@@ -78,7 +78,7 @@ func tryHorizontalFlow(x, y int, state *[][]Droplet) {
 	// Cascade left - distribute to multiple cells
 	for offset := 1; offset <= 3 && x-offset >= 0; offset++ {
 		target := &(*state)[y][x-offset]
-		if target.volume < current.volume {
+		if target.volume < current.volume && !target.isObstacle {
 			flowRate := (current.volume - target.volume) * 0.1 / float64(offset)
 			fill(current, target, 1.0, flowRate)
 		}
@@ -89,19 +89,21 @@ func tryDiagonalFlow(x, y int, state *[][]Droplet) {
 	current := &(*state)[y][x]
 
 	// Flow diagonally down-right if space is available
-	if x+1 < len((*state)[y]) && y+1 < len(*state) && (*state)[y+1][x+1].volume < 1.0 {
+	if x+1 < len((*state)[y]) && y+1 < len(*state) && (*state)[y+1][x+1].volume < 1.0 && !(*state)[y+1][x+1].isObstacle {
 		fill(current, &(*state)[y+1][x+1], 1.0, 0.25)
 	}
 
 	// Flow diagonally down-left if space is available
-	if x > 0 && y+1 < len(*state) && (*state)[y+1][x-1].volume < 1.0 {
+	if x > 0 && y+1 < len(*state) && (*state)[y+1][x-1].volume < 1.0 && !(*state)[y+1][x-1].isObstacle {
 		fill(current, &(*state)[y+1][x-1], 1.0, 0.25)
 	}
 }
 
 func processWaterCell(x, y int, newState *[][]Droplet) {
-	// Try to flow downwards, as if by gravity
-	fill(&(*newState)[y][x], &(*newState)[y+1][x], 1.0, 0.5)
+	// Try to flow downwards, as if by gravity (but not into obstacles)
+	if y+1 < len(*newState) && !(*newState)[y+1][x].isObstacle {
+		fill(&(*newState)[y][x], &(*newState)[y+1][x], 1.0, 0.5)
+	}
 
 	// If all water flowed down, no need to continue
 	if (*newState)[y][x].volume == 0 {
@@ -119,7 +121,6 @@ func processWaterCell(x, y int, newState *[][]Droplet) {
 	if (*newState)[y][x].volume > 0 {
 		tryDiagonalFlow(x, y, newState)
 	}
-
 }
 
 // Calculate how much more water a droplet can hold
@@ -144,14 +145,20 @@ func fill(current, target *Droplet, maxVolume, flowRate float64) {
 }
 
 type Droplet struct {
-	volume float64 // How much water this cell contains (0.0 to 1.0)
-	size   int
+	volume     float64 // How much water this cell contains (0.0 to 1.0)
+	size       int
+	isObstacle bool // Is this cell an obstacle?
 }
 
 func (d *Droplet) Draw(x, y, tileSize int, hasWaterAbove bool) {
 	// Convert grid coordinates to pixel coordinates
 	pixelX := x * tileSize
 	pixelY := y * tileSize
+
+	if d.isObstacle {
+		// Draw obstacle as brown rectangle
+		rl.DrawRectangle(int32(pixelX), int32(pixelY), int32(tileSize), int32(tileSize), rl.Brown)
+	}
 
 	if d.volume > 0 {
 		// Calculate visual height based on water volume
@@ -203,8 +210,26 @@ func CreateGameState(newWidth, newHeight, tileSize int) [][]Droplet {
 }
 
 func CreateWaterGenerator(x, y, tileSize int, state *[][]Droplet) {
-	droplet := Droplet{size: tileSize, volume: 1.0}
-	(*state)[y][x] = droplet
+	for xOffset := 0; xOffset <= 4; xOffset++ {
+		droplet := Droplet{size: tileSize, volume: 1.0}
+		(*state)[y][x+xOffset] = droplet
+
+	}
+}
+
+func CreateHorizontalObstacle(x, y, size int, state *[][]Droplet) {
+	for offset := range size {
+		(*state)[y][x+offset].isObstacle = true
+		(*state)[y+1][x+offset].isObstacle = true
+		(*state)[y+2][x+offset].isObstacle = true
+	}
+}
+func CreateVerticleObstacle(x, y, size int, state *[][]Droplet) {
+	for offset := range size {
+		(*state)[y+offset][x].isObstacle = true
+		(*state)[y+offset][x+1].isObstacle = true
+		(*state)[y+offset][x+2].isObstacle = true
+	}
 }
 
 func main() {
@@ -217,9 +242,14 @@ func main() {
 
 	// Set up a counter, so we can spwan new water at a rate
 	frameCount := 0
-	flowStartX := 100 / game.tileSize
+	flowStartX := 400 / game.tileSize
 	flowStartY := 100 / game.tileSize
 	CreateWaterGenerator(flowStartX, flowStartY, game.tileSize, &game.State)
+
+	CreateVerticleObstacle(30, 20, 10, &game.State)
+
+	CreateHorizontalObstacle(0, 30, 50, &game.State)
+	CreateHorizontalObstacle(40, 20, 40, &game.State)
 
 	// Setup the frame per second rate
 	rl.SetTargetFPS(20)
@@ -233,10 +263,8 @@ func main() {
 		rl.ClearBackground(rl.Black)
 
 		// Add new water every 5 frames (creates continuous water stream)
-		if frameCount%5 == 0 {
+		if frameCount%3 == 0 {
 			CreateWaterGenerator(flowStartX, flowStartY, game.tileSize, &game.State)
-			CreateWaterGenerator(flowStartX+1, flowStartY, game.tileSize, &game.State)
-			CreateWaterGenerator(flowStartX-1, flowStartY, game.tileSize, &game.State)
 		}
 
 		// Draw the game state
