@@ -1,0 +1,36 @@
+<svg width="512" height="384" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="512" height="384" fill="#e3f2fd" stroke="#333" stroke-width="2"/>
+  
+  <!-- Grid cells with padding -->
+  <g stroke="#333" stroke-width="1" fill="white">
+    <!-- Row 0 -->
+    <rect x="4" y="4" width="56" height="56"/><rect x="68" y="4" width="56" height="56"/><rect x="132" y="4" width="56" height="56"/><rect x="196" y="4" width="56" height="56"/><rect x="260" y="4" width="56" height="56"/><rect x="324" y="4" width="56" height="56"/><rect x="388" y="4" width="56" height="56"/><rect x="452" y="4" width="56" height="56"/>
+    <!-- Row 1 -->
+    <rect x="4" y="68" width="56" height="56"/><rect x="68" y="68" width="56" height="56"/><rect x="132" y="68" width="56" height="56"/><rect x="196" y="68" width="56" height="56"/><rect x="260" y="68" width="56" height="56"/><rect x="324" y="68" width="56" height="56"/><rect x="388" y="68" width="56" height="56"/><rect x="452" y="68" width="56" height="56"/>
+    <!-- Row 2 -->
+    <rect x="4" y="132" width="56" height="56"/><rect x="68" y="132" width="56" height="56"/><rect x="132" y="132" width="56" height="56"/><rect x="196" y="132" width="56" height="56"/><rect x="260" y="132" width="56" height="56"/><rect x="324" y="132" width="56" height="56"/><rect x="388" y="132" width="56" height="56"/><rect x="452" y="132" width="56" height="56"/>
+    <!-- Row 3 -->
+    <rect x="4" y="196" width="56" height="56"/><rect x="68" y="196" width="56" height="56"/><rect x="132" y="196" width="56" height="56"/><rect x="196" y="196" width="56" height="56"/><rect x="260" y="196" width="56" height="56"/><rect x="324" y="196" width="56" height="56"/><rect x="388" y="196" width="56" height="56"/><rect x="452" y="196" width="56" height="56"/>
+    <!-- Row 4 -->
+    <rect x="4" y="260" width="56" height="56"/><rect x="68" y="260" width="56" height="56"/><rect x="132" y="260" width="56" height="56"/><rect x="196" y="260" width="56" height="56"/><rect x="260" y="260" width="56" height="56"/><rect x="324" y="260" width="56" height="56"/><rect x="388" y="260" width="56" height="56"/><rect x="452" y="260" width="56" height="56"/>
+    <!-- Row 5 -->
+    <rect x="4" y="324" width="56" height="56"/><rect x="68" y="324" width="56" height="56"/><rect x="132" y="324" width="56" height="56"/><rect x="196" y="324" width="56" height="56"/><rect x="260" y="324" width="56" height="56"/><rect x="324" y="324" width="56" height="56"/><rect x="388" y="324" width="56" height="56"/><rect x="452" y="324" width="56" height="56"/>
+  </g>
+  
+  <!-- Coordinates in each cell -->
+  <g font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#333" text-anchor="middle">
+    <!-- Row 0 -->
+    <text x="32" y="36">0,0</text><text x="96" y="36">1,0</text><text x="160" y="36">2,0</text><text x="224" y="36">3,0</text><text x="288" y="36">4,0</text><text x="352" y="36">5,0</text><text x="416" y="36">6,0</text><text x="480" y="36">7,0</text>
+    <!-- Row 1 -->
+    <text x="32" y="100">0,1</text><text x="96" y="100">1,1</text><text x="160" y="100">2,1</text><text x="224" y="100">3,1</text><text x="288" y="100">4,1</text><text x="352" y="100">5,1</text><text x="416" y="100">6,1</text><text x="480" y="100">7,1</text>
+    <!-- Row 2 -->
+    <text x="32" y="164">0,2</text><text x="96" y="164">1,2</text><text x="160" y="164">2,2</text><text x="224" y="164">3,2</text><text x="288" y="164">4,2</text><text x="352" y="164">5,2</text><text x="416" y="164">6,2</text><text x="480" y="164">7,2</text>
+    <!-- Row 3 -->
+    <text x="32" y="228">0,3</text><text x="96" y="228">1,3</text><text x="160" y="228">2,3</text><text x="224" y="228">3,3</text><text x="288" y="228">4,3</text><text x="352" y="228">5,3</text><text x="416" y="228">6,3</text><text x="480" y="228">7,3</text>
+    <!-- Row 4 -->
+    <text x="32" y="292">0,4</text><text x="96" y="292">1,4</text><text x="160" y="292">2,4</text><text x="224" y="292">3,4</text><text x="288" y="292">4,4</text><text x="352" y="292">5,4</text><text x="416" y="292">6,4</text><text x="480" y="292">7,4</text>
+    <!-- Row 5 -->
+    <text x="32" y="356">0,5</text><text x="96" y="356">1,5</text><text x="160" y="356">2,5</text><text x="224" y="356">3,5</text><text x="288" y="356">4,5</text><text x="352" y="356">5,5</text><text x="416" y="356">6,5</text><text x="480" y="356">7,5</text>
+  </g>
+</svg>
