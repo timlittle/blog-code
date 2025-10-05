@@ -15,13 +15,22 @@ func init() {
 	// Setup the raylib window
 	rl.InitWindow(screenWidth, screenHeight, "Asteroids")
 	rl.SetTargetFPS(60)
+
+	// Load textures
+	texBackground = rl.LoadTexture("resources/space_background.png")
 }
+
+var (
+	texBackground rl.Texture2D
+)
 
 func draw() {
 	rl.BeginDrawing()
 
-	// Set the background to black
-	rl.ClearBackground(rl.Black)
+	// Set the background to a nebula
+	bgSource := rl.Rectangle{X: 0, Y: 0, Width: float32(texBackground.Width), Height: float32(texBackground.Height)}
+	bgDest := rl.Rectangle{X: 0, Y: 0, Width: screenWidth, Height: screenHeight}
+	rl.DrawTexturePro(texBackground, bgSource, bgDest, rl.Vector2{X: 0, Y: 0}, 0, rl.White)
 
 	// Draw the score to the screen
 	rl.DrawText("Score 0", 10, 10, 20, rl.Gray)
@@ -37,6 +46,9 @@ func update() {
 
 func deinit() {
 	rl.CloseWindow()
+
+	// Unload textures when the game closes
+	rl.UnloadTexture(texBackground)
 }
 
 func main() {
