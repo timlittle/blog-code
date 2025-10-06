@@ -1,13 +1,17 @@
 package main
 
 import (
+	"math"
+
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
 const (
-	screenWidth  = 800
-	screenHeight = 400
-	tileSize     = 64
+	screenWidth   = 800
+	screenHeight  = 400
+	tileSize      = 64
+	rotationSpeed = 2.0
+	playerSpeed   = 6.0
 )
 
 var (
@@ -36,6 +40,78 @@ func (p *Player) Draw() {
 		p.rotation,
 		rl.White,
 	)
+}
+
+func (p *Player) Update() {
+
+	// Rotate the player with the arrow keys
+	if rl.IsKeyDown(rl.KeyLeft) {
+		player.rotation -= rotationSpeed
+	}
+	if rl.IsKeyDown(rl.KeyRight) {
+		player.rotation += rotationSpeed
+	}
+
+	// Accelerate the player with up
+	if rl.IsKeyDown(rl.KeyUp) {
+		if player.acceleration < 0.9 {
+			player.acceleration += 0.1
+		}
+		player.isBoosting = true
+	}
+	// Decellerate the player with down
+	if rl.IsKeyDown(rl.KeyDown) {
+		if player.acceleration > 0 {
+			player.acceleration -= 0.05
+		}
+		if player.acceleration < 0 {
+			player.acceleration = 0
+
+		}
+	}
+
+	// Get the direction the sprite is pointing
+	direction := getDirectionVector(player.rotation)
+
+	// Start to move to the direction
+	player.speed = rl.Vector2Scale(direction, playerSpeed)
+
+	// Accelerate in that direction
+	player.position.X += player.speed.X * player.acceleration
+	player.position.Y -= player.speed.Y * player.acceleration
+
+	// To void losing our ship, we wrap around the screen
+	wrapPosition(&p.position, tileSize)
+}
+
+func getDirectionVector(rotation float32) rl.Vector2 {
+	// Convert the rotation to radians
+	radians := float64(rotation) * rl.Deg2rad
+
+	// Return the vector of the direction we are pointing at
+	return rl.Vector2{
+		X: float32(math.Sin(radians)),
+		Y: float32(math.Cos(radians)),
+	}
+}
+
+func wrapPosition(pos *rl.Vector2, objectSize float32) {
+	// If we go off the left side of the screen
+	if pos.X > screenWidth+objectSize {
+		pos.X = -objectSize
+	}
+	// If we go off the right side of the screen
+	if pos.X < -objectSize {
+		pos.X = screenWidth + objectSize
+	}
+	// If we go off the bottom of the screen
+	if pos.Y > screenHeight+objectSize {
+		pos.Y = -objectSize
+	}
+	// If we go off the top of the screen
+	if pos.Y < -objectSize {
+		pos.Y = screenHeight + objectSize
+	}
 }
 
 func initGame() {
@@ -84,8 +160,7 @@ func draw() {
 }
 
 func update() {
-	//TODO:  Update the state
-
+	player.Update()
 }
 
 func deinit() {
