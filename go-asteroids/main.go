@@ -18,6 +18,7 @@ var (
 	texTiles      rl.Texture2D
 	texBackground rl.Texture2D
 	spriteRec     rl.Rectangle
+	boostRec      rl.Rectangle
 	player        Player
 )
 
@@ -32,6 +33,16 @@ type Player struct {
 
 func (p *Player) Draw() {
 	destTexture := rl.Rectangle{X: p.position.X, Y: p.position.Y, Width: p.size.X, Height: p.size.Y}
+	if p.isBoosting {
+		rl.DrawTexturePro(
+			texTiles,
+			boostRec,
+			destTexture,
+			rl.Vector2{X: p.size.X / 2, Y: p.size.Y/2 - 40},
+			p.rotation,
+			rl.White,
+		)
+	}
 	rl.DrawTexturePro(
 		texTiles,
 		spriteRec,
@@ -51,6 +62,8 @@ func (p *Player) Update() {
 	if rl.IsKeyDown(rl.KeyRight) {
 		player.rotation += rotationSpeed
 	}
+	// Default to not boosting
+	player.isBoosting = false
 
 	// Accelerate the player with up
 	if rl.IsKeyDown(rl.KeyUp) {
@@ -136,7 +149,9 @@ func init() {
 	texTiles = rl.LoadTexture("resources/tilesheet.png")
 	texBackground = rl.LoadTexture("resources/space_background.png")
 
+	// Sprites for the ship and it boost
 	spriteRec = rl.Rectangle{X: tileSize * 0, Y: tileSize * 2, Width: tileSize, Height: tileSize}
+	boostRec = rl.Rectangle{X: tileSize * 7, Y: tileSize * 5, Width: tileSize, Height: tileSize}
 
 	initGame()
 }
