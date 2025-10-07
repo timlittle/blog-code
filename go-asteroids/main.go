@@ -23,6 +23,7 @@ var (
 	asteroidRec   rl.Rectangle
 	asteroids     []Asteroid
 	player        Player
+	gameOver      bool
 )
 
 type Player struct {
@@ -222,7 +223,31 @@ func wrapPosition(pos *rl.Vector2, objectSize float32) {
 	}
 }
 
+func drawCenteredText(text string, y, fontSize int32, color rl.Color) {
+	textWidth := rl.MeasureText(text, fontSize)
+	rl.DrawText(text, screenWidth/2-textWidth/2, y, fontSize, color)
+}
+
+func checkCollisions() {
+	for i := len(asteroids) - 1; i >= 0; i-- {
+		// Check for collision between player and asteroid
+		if rl.CheckCollisionCircles(
+			player.position,
+			player.size.X/4,
+			asteroids[i].position,
+			asteroids[i].size.X/4,
+		) {
+			gameOver = true
+
+		}
+	}
+}
+
 func initGame() {
+
+	// Start with it not being game over
+	gameOver = false
+
 	// Create the asteroids field
 	asteroids = nil
 	for range initialAsteroids {
@@ -277,6 +302,10 @@ func draw() {
 		asteroids[i].Draw()
 	}
 
+	if gameOver {
+		drawCenteredText("Game over", screenHeight/2, 50, rl.Red)
+	}
+
 	// Draw the score to the screen
 	rl.DrawText("Score 0", 10, 10, 20, rl.Gray)
 
@@ -285,12 +314,18 @@ func draw() {
 }
 
 func update() {
-	// Update the player
-	player.Update()
+	// If it is not game over, update the frame
+	if !gameOver {
+		// Update the player
+		player.Update()
 
-	// Update the asteroid field
-	for i := range asteroids {
-		asteroids[i].Update()
+		// Update the asteroid field
+		for i := range asteroids {
+			asteroids[i].Update()
+		}
+
+		checkCollisions()
+
 	}
 
 }
