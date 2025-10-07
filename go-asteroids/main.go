@@ -12,6 +12,8 @@ const (
 	tileSize         = 64
 	rotationSpeed    = 2.0
 	playerSpeed      = 6.0
+	shotSpeed        = 8.0
+	maxShots         = 10
 	initialAsteroids = 5
 )
 
@@ -24,6 +26,7 @@ var (
 	asteroids     []Asteroid
 	player        Player
 	gameOver      bool
+	shots         []Shot
 )
 
 type Player struct {
@@ -69,6 +72,11 @@ func (p *Player) Update() {
 	// Default to not boosting
 	player.isBoosting = false
 
+	// Fire the lasers
+	if rl.IsKeyPressed(rl.KeySpace) {
+		fireShot()
+	}
+
 	// Accelerate the player with up
 	if rl.IsKeyDown(rl.KeyUp) {
 		if player.acceleration < 0.9 {
@@ -99,6 +107,30 @@ func (p *Player) Update() {
 
 	// To void losing our ship, we wrap around the screen
 	wrapPosition(&p.position, tileSize)
+}
+
+type Shot struct {
+	position rl.Vector2
+	speed    rl.Vector2
+	radius   float32
+	active   bool
+}
+
+func (s *Shot) Draw() {
+	if s.active {
+		rl.DrawCircleV(s.position, s.radius, rl.Yellow)
+	}
+}
+
+func (s *Shot) Update() {
+	if s.active {
+		s.position.X += s.speed.X
+		s.position.Y -= s.speed.Y
+
+		if s.position.X < 0 || s.position.X > screenWidth || s.position.Y < 0 || s.position.Y > screenHeight {
+			s.active = false
+		}
+	}
 }
 
 // Enum for storing the size of the asteroid
@@ -243,6 +275,32 @@ func checkCollisions() {
 	}
 }
 
+func fireShot() {
+	for i := range shots {
+		// Find the first inactive shot
+		if !shots[i].active {
+			// Start at the players position
+			shots[i].position = player.position
+			shots[i].active = true
+
+			// Get the players direction
+			shotDirection := getDirectionVector(player.rotation)
+
+			// Get the initial velocity
+			shotVelocity := rl.Vector2Scale(shotDirection, shotSpeed)
+			// Account for the players speed
+			playerVelocity := rl.Vector2Scale(player.speed, player.acceleration)
+
+			// Fire the shot, realative to the players speed
+			shots[i].speed = rl.Vector2Add(playerVelocity, shotVelocity)
+
+			shots[i].radius = 2
+			// Break after one shot
+			break
+		}
+	}
+}
+
 func initGame() {
 
 	// Start with it not being game over
@@ -252,6 +310,11 @@ func initGame() {
 	asteroids = nil
 	for range initialAsteroids {
 		asteroids = append(asteroids, createLargeAsteroid())
+	}
+
+	// Create the laser shots
+	for i := range shots {
+		shots[i].active = false
 	}
 
 	// Create the player
@@ -283,6 +346,9 @@ func init() {
 	// Sprite for the asteroid
 	asteroidRec = rl.Rectangle{X: tileSize * 1, Y: tileSize * 4, Width: tileSize, Height: tileSize}
 
+	// Create the shots
+	shots = make([]Shot, maxShots)
+
 	initGame()
 }
 
@@ -300,6 +366,11 @@ func draw() {
 	// Draw the asteroid field
 	for i := range asteroids {
 		asteroids[i].Draw()
+	}
+
+	// Draw the shots
+	for i := range shots {
+		shots[i].Draw()
 	}
 
 	if gameOver {
@@ -322,6 +393,11 @@ func update() {
 		// Update the asteroid field
 		for i := range asteroids {
 			asteroids[i].Update()
+		}
+
+		// Update the shots
+		for i := range shots {
+			shots[i].Update()
 		}
 
 		checkCollisions()
