@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"math"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
@@ -18,15 +19,16 @@ const (
 )
 
 var (
-	texTiles      rl.Texture2D
-	texBackground rl.Texture2D
-	spriteRec     rl.Rectangle
-	boostRec      rl.Rectangle
-	asteroidRec   rl.Rectangle
-	asteroids     []Asteroid
-	player        Player
-	gameOver      bool
-	shots         []Shot
+	texTiles           rl.Texture2D
+	texBackground      rl.Texture2D
+	spriteRec          rl.Rectangle
+	boostRec           rl.Rectangle
+	asteroidRec        rl.Rectangle
+	asteroids          []Asteroid
+	player             Player
+	gameOver           bool
+	shots              []Shot
+	asteriodsDestroyed int
 )
 
 type Player struct {
@@ -272,7 +274,64 @@ func checkCollisions() {
 			gameOver = true
 
 		}
+
+		// Check for a collision between shots and the asteroid
+		for j := range shots {
+			// Loop through all the active shots
+			if shots[j].active {
+				// If it has collided with an asteroid
+				if rl.CheckCollisionCircles(
+					shots[j].position,
+					shots[j].radius,
+					asteroids[i].position,
+					asteroids[i].size.X/2,
+				) {
+					// Destroy the shot and split the asteroid
+					shots[j].active = false
+
+					// The asteroid shot split according to our rules
+					splitAsteroid(asteroids[i])
+
+					// Remove the original asteroid from the slice
+					asteroids = append(asteroids[:i], asteroids[i+1:]...)
+
+					// Increase our score
+					asteriodsDestroyed++
+					break
+				}
+			}
+
+		}
 	}
+}
+
+func splitAsteroid(asteroid Asteroid) {
+	// Do nothing for small
+	if asteroid.asteroidSize == Small {
+		return
+
+	}
+
+	// Work out how many splits to do
+	var newSize AsteroidSize
+	var split int
+	if asteroid.asteroidSize == Large {
+		newSize = Medium
+		split = 2
+	} else {
+		newSize = Small
+		split = 4
+	}
+
+	// Create the new smaller asteroids
+	for range split {
+		angle := float64(rl.GetRandomValue(0, 360))
+		direction := getDirectionVector(float32(angle))
+		speed := rl.Vector2Scale(direction, 2.0)
+		newAsteroid := createAsteroid(newSize, asteroid.position, speed)
+		asteroids = append(asteroids, newAsteroid)
+	}
+
 }
 
 func fireShot() {
@@ -378,7 +437,7 @@ func draw() {
 	}
 
 	// Draw the score to the screen
-	rl.DrawText("Score 0", 10, 10, 20, rl.Gray)
+	rl.DrawText(fmt.Sprintf("Score %d", asteriodsDestroyed), 10, 10, 20, rl.Gray)
 
 	rl.EndDrawing()
 
