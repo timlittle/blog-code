@@ -7,6 +7,8 @@ This repository contains code examples from my blog posts at https://medium.com/
 Currently, this repository includes:
 
 - **go-gameoflife** - A Go implementation of Conway's Game of Life
+- **go-asteroids** - A Go implementation of the classic Asteroids arcade game
+- **go-watersim** - A Go implementation of a 2D water simulation
 
 More projects will be added as I publish new blog posts with accompanying code examples.
 
